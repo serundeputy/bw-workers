@@ -8,14 +8,27 @@ $baseUrl = 'https://api.github.com';
 $token = getenv('GITHUBAPI_TOKEN');
 $authorization = 'Authorization: token ' . $token;
 
+$date = isset($argv[1]) ? $argv[1] : '';
+$test_run = isset($argv[2]) ? TRUE : FALSE;
+
+if ($date == '') {
+  print "\n\n\tA date is required to return releases since dtate.\n";
+  return;
+}
+
+if ($test_run) {
+  print "\n\n\tThis is a test run and only the first 30 results will be used.\n\n";
+}
+
 $new_releases = get_new_rleases_since_date(
   $baseUrl,
   $authorization,
-  '2019-02-01T20:08:20Z',
-  'backdrop-contrib'
+  $date,
+  'backdrop-contrib',
+  $test_run
 );
 $count = count($new_releases);
-$text = ($count > 1)
+$text = ($count > 1 || $count == 0)
   ? "There have been $count new releases this week!"
   : "There has been $count new release this week.";
 
@@ -82,8 +95,10 @@ function get_latest_release($baseUrl, $authorization, $owner = 'backdrop-contrib
  *
  * @return Object
  *   Data from the GitHub API.
+ *
+ * @see _next_url()
  */
-function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-contrib') {
+function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-contrib', $test_run = FALSE) {
   $url = "$baseUrl/orgs/$org/repos";
   $projects = [];
 
@@ -115,7 +130,7 @@ function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-con
         $projects[] = $project->name;
       }
     }
-    $url = _next_url($myHeader);
+    $url = _next_url($myHeader, $test_run);
   } 
   while ($url);
 
@@ -137,9 +152,9 @@ function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-con
  * @see get_all_contrib_projects()
  * @see get_latest_release()
  */
-function get_new_rleases_since_date($baseUrl, $authorization, $date, $org) {
+function get_new_rleases_since_date($baseUrl, $authorization, $date, $org, $test_run = FALSE) {
   $new_releases = [];
-  $projects = get_all_contrib_projects($baseUrl, $authorization, $org);
+  $projects = get_all_contrib_projects($baseUrl, $authorization, $org, $test_run);
   foreach ($projects as $project) {
 		// Get the latest release of the $project.
     $release = get_latest_release($baseUrl, $authorization, $org, $project);
@@ -168,7 +183,10 @@ print_r(['rd' => $release_date]);
  * @return string nextUrl | NULL
  *   The next url from paginated request or NULL.
  */
-function _next_url($myHeader) {
+function _next_url($myHeader, $test_run = FALSE) {
+  if ($test_run) {
+    return NULL;
+  }
   if (isset($myHeader[15])
     && strpos($myHeader[15], 'rel="next"') == TRUE
     && strpos($myHeader[15], 'rel="prev"') == FALSE) {
