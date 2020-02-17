@@ -1,0 +1,10 @@
+name: github-releases
+env_file:
+  - .env
+services:
+  cli:
+    type: php:7.3
+tooling:
+  php:
+    service: cli
+    cmd: php
