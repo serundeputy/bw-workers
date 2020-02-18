@@ -8,16 +8,18 @@ $baseUrl = 'https://api.github.com';
 $token = getenv('GITHUBAPI_TOKEN');
 $authorization = 'Authorization: token ' . $token;
 
+// @todo: for now update this date weekly.
+// Last week: 2020-02-13T20:08:20Z
 $date = isset($argv[1]) ? $argv[1] : '';
 $test_run = isset($argv[2]) ? TRUE : FALSE;
 
 if ($date == '') {
-  print "\n\n\tA date is required to return releases since dtate.\n";
+  print "\n\tA date is required to return releases since \$date.\n\n";
   return;
 }
 
 if ($test_run) {
-  print "\n\n\tThis is a test run and only the first 30 results will be used.\n\n";
+  print "\n\tThis is a test run and only the first 30 results will be used.\n\n";
 }
 
 $new_releases = get_new_rleases_since_date(

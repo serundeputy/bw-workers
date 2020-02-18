@@ -4,7 +4,12 @@ env_file:
 services:
   cli:
     type: php:7.3
+    build:
+      - curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 tooling:
   php:
     service: cli
     cmd: php
+  composer:
+    service: cli
+    cmd: composer
