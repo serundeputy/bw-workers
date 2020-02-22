@@ -65,8 +65,11 @@ get-tweets.php
 
 This file will hit the Twitter API and search for tweets w/ `backdropcms` in them.
 
-usage:
+Usage:
 
 ```bash
-
+lando php get-tweets.php "backdrop is awesome"
 ```
+
+Replace "backdrop is awesome" with whatever query you care about.
+
