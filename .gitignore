@@ -4,3 +4,4 @@ node_modules
 *.sql
 *.sql.gz
 *.gz
+errors.md
