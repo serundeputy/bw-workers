@@ -21,6 +21,8 @@ function get_tweets() {
   $access_token = getenv('TWITTER_ACCESS_TOKEN');
   $access_token_secret = getenv('TWITTER_ACCESS_TOKEN_SECRET');
 
+  $search_string = isset($argv[1]) ? $argv[1] : 'backdropcms';
+
   $connection = new TwitterOAuth(
 		$consumer_key,
 		$consumer_secret,
@@ -28,7 +30,7 @@ function get_tweets() {
     $access_token_secret
   );
   $statuses = $connection->get(
-    "search/tweets", ["q" => "backdropcms"]
+    "search/tweets", ["q" => $search_string]
   );
   
   $simplified_statuses = [];
