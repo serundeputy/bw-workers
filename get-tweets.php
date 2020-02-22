@@ -8,20 +8,20 @@ require_once __DIR__ . "/vendor/autoload.php";
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 
+$search_string = isset($argv[1]) ? $argv[1] : 'backdropcms';
 
 // Get the tweets.
-$tweets = get_tweets();
+$tweets = get_tweets($search_string);
 print_r($tweets['simplified_statuses']);
 /**
  * Get tweets.
  */
-function get_tweets() {
+function get_tweets($search_string) {
   $consumer_key = getenv('TWITTER_CONSUMER_KEY');
   $consumer_secret = getenv('TWITTER_CONSUMER_SECRET');
   $access_token = getenv('TWITTER_ACCESS_TOKEN');
   $access_token_secret = getenv('TWITTER_ACCESS_TOKEN_SECRET');
 
-  $search_string = isset($argv[1]) ? $argv[1] : 'backdropcms';
 
   $connection = new TwitterOAuth(
 		$consumer_key,
