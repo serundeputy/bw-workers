@@ -38,15 +38,20 @@ $html = '<div>';
 $html .= "<div>
   $text
 </div>";
+$txt = $text;
 foreach ($new_releases as $machine_name => $release) {
   $html .= <<< HTML
     <div>
 			<a href="{$release['url']}">$machine_name</a> {$release['version']} {$release['author']}
 		</div>  
 HTML;
+  $txt .= "\n* $machine_name {$release['version']} \n\t * {$release['author']}";
 }
 $html .= '</div>';
-print_r($html);
+print_r([
+  'html' => $html,
+  'txt' => $txt,
+]);
 
 /**
  * Query github api for the latest release of a project.
@@ -162,7 +167,11 @@ function get_new_rleases_since_date($baseUrl, $authorization, $date, $org, $test
     $release = get_latest_release($baseUrl, $authorization, $org, $project);
 		$release_name = $release->project;
 		$release_date = (isset($release->created_at)) ? $release->created_at : NULL;
-print_r(['rd' => $release_date]);
+    print_r([
+      'release date' => $release_date,
+			'strtotime date' => strtotime($date),
+      'strtotime rd' => strtotime($release_date),
+    ]);
     // Check if release is later than $date.
     if (!empty($release_date) && strtotime($release_date) > strtotime($date)) {
 		  $new_releases[$release_name] = [
