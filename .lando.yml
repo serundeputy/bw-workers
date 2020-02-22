@@ -1,4 +1,4 @@
-name: github-releases
+name: bw-workers
 env_file:
   - .env
 services:
