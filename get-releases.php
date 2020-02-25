@@ -168,6 +168,7 @@ function get_new_rleases_since_date($baseUrl, $authorization, $date, $org, $test
 		$release_name = $release->project;
 		$release_date = (isset($release->created_at)) ? $release->created_at : NULL;
     print_r([
+      'release name' => $release->project,
       'release date' => $release_date,
 			'strtotime date' => strtotime($date),
       'strtotime rd' => strtotime($release_date),
