@@ -31,8 +31,8 @@ $new_releases = get_new_rleases_since_date(
 );
 $count = count($new_releases);
 $text = ($count > 1 || $count == 0)
-  ? "There have been $count new releases this week!"
-  : "There has been $count new release this week.";
+  ? "There have been $count new releases since $date!"
+  : "There has been $count new release since $date.";
 
 $html = '<div>';
 $html .= "<div>
