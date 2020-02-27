@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Aggregeate tweets from @serundeputy for display on serundeputy.io.
+ * Aggregeate tweets from a search_string.
  */
 
 require_once __DIR__ . "/vendor/autoload.php";
@@ -21,7 +21,6 @@ function get_tweets($search_string) {
   $consumer_secret = getenv('TWITTER_CONSUMER_SECRET');
   $access_token = getenv('TWITTER_ACCESS_TOKEN');
   $access_token_secret = getenv('TWITTER_ACCESS_TOKEN_SECRET');
-
 
   $connection = new TwitterOAuth(
 		$consumer_key,
