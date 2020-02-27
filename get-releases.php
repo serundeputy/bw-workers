@@ -4,7 +4,7 @@
  * Get the latest release of a project from github.
  */
 
-$baseUrl = 'https://api.github.com';
+$base_url = 'https://api.github.com';
 $token = getenv('GITHUBAPI_TOKEN');
 $authorization = 'Authorization: token ' . $token;
 
@@ -23,16 +23,16 @@ if ($test_run) {
 }
 
 $new_releases = get_new_rleases_since_date(
-  $baseUrl,
+  $base_url,
   $authorization,
   $date,
   'backdrop-contrib',
   $test_run
 );
 $count = count($new_releases);
-$text = ($count > 1 || $count == 0)
-  ? "There have been $count new releases since $date!"
-  : "There has been $count new release since $date.";
+$text = ($count > 1 || $count == 0) ?
+  "There have been $count new releases since $date!" :
+  "There has been $count new release since $date.";
 
 $html = '<div>';
 $html .= "<div>
@@ -56,16 +56,20 @@ print_r([
 /**
  * Query github api for the latest release of a project.
  *
- * @param strong $owner
- *   The owner of the repo the i.e. the org or username.
+ * @param string $base_url
+ *   The base url for the API call. 
+ * @param string $authorization
+ *   The authorization string for the header API call.
  * @param string $repo
- *   The project that you wish to get the latest release for.
+ *   The repo to get the latest release for.
+ * @param string $owner
+ *   The owner or org of the repo. 
  *
  * @return array
- *   The return from GitHub API.
+ *   The response from GitHub API.
  */
-function get_latest_release($baseUrl, $authorization, $owner = 'backdrop-contrib', $repo) {
-  $url = "$baseUrl/repos/$owner/$repo/releases/latest";
+function get_latest_release($base_url, $authorization, $repo, $owner = 'backdrop-contrib') {
+  $url = "$base_url/repos/$owner/$repo/releases/latest";
 
   $ch = curl_init();
   curl_setopt(
@@ -73,7 +77,7 @@ function get_latest_release($baseUrl, $authorization, $owner = 'backdrop-contrib
     CURLOPT_HTTPHEADER,
     array('Content-Type: application/json', $authorization)
   );
-  curl_setopt (
+  curl_setopt(
     $ch,
     CURLOPT_USERAGENT,
     'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)'
@@ -87,7 +91,7 @@ function get_latest_release($baseUrl, $authorization, $owner = 'backdrop-contrib
   $header = substr($content, 0, $header_size);
   $body = substr($content, $header_size);
   curl_close($ch);
-  $myHeader = explode("\n", $header);
+  $my_header = explode("\n", $header);
   $body = json_decode($body);
   $body->project = $repo;
 
@@ -97,16 +101,22 @@ function get_latest_release($baseUrl, $authorization, $owner = 'backdrop-contrib
 /**
  * Query GitHub API for all backdrop-contrib projects.
  *
+ * @param string $base_url
+ *   The base url for API query.
+ * @param string $authorization
+ *   The authorization string for the header of API request.
  * @param string $org
- * The org to get the project from.
+ *   The org to get the project from.
+ * @param bool $test_run
+ *   Pass in a TRUE if you want to limit to 30 queries for testing. 
  *
  * @return Object
  *   Data from the GitHub API.
  *
  * @see _next_url()
  */
-function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-contrib', $test_run = FALSE) {
-  $url = "$baseUrl/orgs/$org/repos";
+function get_all_contrib_projects($base_url, $authorization, $org = 'backdrop-contrib', $test_run = FALSE) {
+  $url = "$base_url/orgs/$org/repos";
   $projects = [];
 
   do {
@@ -116,7 +126,7 @@ function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-con
       CURLOPT_HTTPHEADER,
       array('Content-Type: application/json', $authorization)
     );
-    curl_setopt (
+    curl_setopt(
       $ch,
       CURLOPT_USERAGENT,
       'Mozilla/4.0 (compatible; MSIE 5.01; Windows NT 5.0)'
@@ -130,16 +140,15 @@ function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-con
     $header = substr($content, 0, $header_size);
     $body = substr($content, $header_size);
     curl_close($ch);
-    $myHeader = explode("\n", $header);
+    $my_header = explode("\n", $header);
     $body = json_decode($body);
-		if (!empty($body)) {
+    if (!empty($body)) {
       foreach ($body as $project) {
         $projects[] = $project->name;
       }
     }
-    $url = _next_url($myHeader, $test_run);
-  } 
-  while ($url);
+    $url = _next_url($my_header, $test_run);
+  } while ($url);
 
   return $projects;
 }
@@ -147,7 +156,7 @@ function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-con
 /**
  * Check for new releases of a project.
  *
- * @param string $baseUrl
+ * @param string $base_url
  *   The base url of the API.
  * @param string $authorization
  *   The authorization string for the header of the query.
@@ -159,72 +168,72 @@ function get_all_contrib_projects($baseUrl, $authorization, $org = 'backdrop-con
  * @see get_all_contrib_projects()
  * @see get_latest_release()
  */
-function get_new_rleases_since_date($baseUrl, $authorization, $date, $org, $test_run = FALSE) {
+function get_new_rleases_since_date($base_url, $authorization, $date, $org, $test_run = FALSE) {
   $new_releases = [];
-  $projects = get_all_contrib_projects($baseUrl, $authorization, $org, $test_run);
+  $projects = get_all_contrib_projects($base_url, $authorization, $org, $test_run);
   foreach ($projects as $project) {
-		// Get the latest release of the $project.
-    $release = get_latest_release($baseUrl, $authorization, $org, $project);
-		$release_name = $release->project;
-		$release_date = (isset($release->created_at)) ? $release->created_at : NULL;
+    // Get the latest release of the $project.
+    $release = get_latest_release($base_url, $authorization, $org, $project);
+    $release_name = $release->project;
+    $release_date = (isset($release->created_at)) ? $release->created_at : NULL;
     print_r([
       'release name' => $release->project,
       'release date' => $release_date,
-			'strtotime date' => strtotime($date),
+      'strtotime date' => strtotime($date),
       'strtotime rd' => strtotime($release_date),
     ]);
     // Check if release is later than $date.
     if (!empty($release_date) && strtotime($release_date) > strtotime($date)) {
-		  $new_releases[$release_name] = [
+      $new_releases[$release_name] = [
         'version' => $release->tag_name,
         'author' => '@' . $release->author->login,
-				'url' => $release->html_url,
-			];
+        'url' => $release->html_url,
+      ];
     }
   }
 
-	return $new_releases;
+  return $new_releases;
 }
 
 /**
  * Check the header to see if there is a nextUrl.
  *
- * @param array $myHeader
+ * @param array $my_header
  *   The header from the GitHub API request.
  *
- * @return string nextUrl | NULL
- *   The next url from paginated request or NULL.
+ * @return string|NULL
+ *   $next_url The next url from paginated request or NULL.
  */
-function _next_url($myHeader, $test_run = FALSE) {
+function _next_url($my_header, $test_run = FALSE) {
   if ($test_run) {
     return NULL;
   }
-  if (isset($myHeader[15])
-    && strpos($myHeader[15], 'rel="next"') == TRUE
-    && strpos($myHeader[15], 'rel="prev"') == FALSE) {
+  if (isset($my_header[15])
+    && strpos($my_header[15], 'rel="next"') == TRUE
+    && strpos($my_header[15], 'rel="prev"') == FALSE) {
 
-    $nextUrl = explode('rel="next"', $myHeader[15]);
-    $nextUrl = $nextUrl[0];
-    $nextUrl = explode('<', $nextUrl);
-    $nextUrl = $nextUrl[1];
-    $nextUrl = rtrim($nextUrl, '>; ');
+    $next_url = explode('rel="next"', $my_header[15]);
+    $next_url = $next_url[0];
+    $next_url = explode('<', $next_url);
+    $next_url = $next_url[1];
+    $next_url = rtrim($next_url, '>; ');
   }
-  elseif (isset($myHeader[15])
-    && strpos($myHeader[15], 'rel="next"') == TRUE
-    && strpos($myHeader[15], 'rel="prev"') == TRUE) {
+  elseif (isset($my_header[15])
+    && strpos($my_header[15], 'rel="next"') == TRUE
+    && strpos($my_header[15], 'rel="prev"') == TRUE) {
 
-    $nextUrl = explode('rel="next"', $myHeader[15]);
-    $nextUrl = $nextUrl[0];
-    $nextUrl = explode('rel="prev"', $nextUrl);
-    $nextUrl = $nextUrl[1];
-    $nextUrl = explode('<', $nextUrl);
-    $nextUrl = $nextUrl[1];
-    $nextUrl = rtrim($nextUrl, '>; ');
+    $next_url = explode('rel="next"', $my_header[15]);
+    $next_url = $next_url[0];
+    $next_url = explode('rel="prev"', $next_url);
+    $next_url = $next_url[1];
+    $next_url = explode('<', $next_url);
+    $next_url = $next_url[1];
+    $next_url = rtrim($next_url, '>; ');
   }
   else {
-    $nextUrl = NULL;
+    $next_url = NULL;
   }
-  print_r(['nu' => $nextUrl]);
+  print_r(['nu' => $next_url]);
 
-  return $nextUrl;
+  return $next_url;
 }
