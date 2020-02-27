@@ -1,6 +1,8 @@
 Backdrop Weekly Workers (bw-workers)
 ====================================
 
+[![Build Status](https://travis-ci.org/serundeputy/bw-workers.svg?branch=master)](https://travis-ci.org/serundeputy/bw-workers)
+
 Some helper functions to automate some bw tasks.
 
 Setup
