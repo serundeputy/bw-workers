@@ -17,3 +17,7 @@ tooling:
     service: cli
     cmd:
       - "/app/vendor/bin/phpcs -n --report=full --standard=/app/vendor/backdrop/coder/coder_sniffer/Backdrop --ignore=vendor/*,README.md --extensions=install,module,php,inc,theme"
+  phpunit:
+    service: cli
+    cmd:
+      - /app/vendor/bin/phpunit
