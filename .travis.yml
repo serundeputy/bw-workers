@@ -11,6 +11,7 @@ before_install:
 
 script:
   # Check code standards
+  - pwd
   - cd serundeputy/bw-workers
   - vendor/bin/phpcs -n --standard=vendor/backdrop/coder/coder_sniffer/Backdrop --ignore="vendor/*,README.md" --extensions=install,module,php,inc,theme .
 
