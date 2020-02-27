@@ -23,23 +23,23 @@ function get_tweets($search_string) {
   $access_token_secret = getenv('TWITTER_ACCESS_TOKEN_SECRET');
 
   $connection = new TwitterOAuth(
-		$consumer_key,
-		$consumer_secret,
+    $consumer_key,
+    $consumer_secret,
     $access_token,
     $access_token_secret
   );
   $statuses = $connection->get(
     "search/tweets", ["q" => $search_string]
   );
-  
+
   $simplified_statuses = [];
   foreach ($statuses as $status) {
     foreach ($status as $data) {
       if (isset($data->user->screen_name)) {
         if (isset($data->retweeted_status)) {
-			    $url = $data->retweeted_status->entities->urls[0]->expanded_url;	
-				}
-				else {
+          $url = $data->retweeted_status->entities->urls[0]->expanded_url;
+        }
+        else {
           $url = $data->entities->urls[0]->expanded_url;
         }
         $simplified_statuses[] = [
