@@ -11,7 +11,7 @@ before_install:
 
 script:
   # Check code standards
-  - vendor/bin/phpcs -n --standard=vendor/backdrop/coder/coder_sniffer/Backdrop --ignore="vendor/*,README.md" --extensions=install,module,php,inc,theme *.php
+  - $TRAVIS_BUILD_DIR/vendor/bin/phpcs -n --standard=vendor/backdrop/coder/coder_sniffer/Backdrop --ignore="vendor/*,README.md" --extensions=install,module,php,inc,theme .
 
   # Unit tests
   # - $TRAVIS_BUILD_DIR/vendor/bin/phpunit -c $TRAVIS_BUILD_DIR/tests
