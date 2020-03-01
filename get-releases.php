@@ -96,7 +96,7 @@ function get_latest_release($base_url, $authorization, $repo, $owner = 'backdrop
   $my_header = explode("\n", $header);
   $body = json_decode($body);
   $body->project = $repo;
-//print_r(['body from lr req' => $body]);exit;
+
   return $body;
 }
 
@@ -120,10 +120,6 @@ function get_latest_release($base_url, $authorization, $repo, $owner = 'backdrop
 function get_all_contrib_projects($base_url, $authorization, $org = 'backdrop-contrib', $test_run = FALSE) {
   $url = "$base_url/users/$org/repos";
   $projects = [];
-  print_r([
-    'org' => $org,
-    'url' => $url,
-  ]);//return;
   do {
     $ch = curl_init();
     curl_setopt(
@@ -147,7 +143,7 @@ function get_all_contrib_projects($base_url, $authorization, $org = 'backdrop-co
     curl_close($ch);
     $my_header = explode("\n", $header);
     $body = json_decode($body);
-    // print_r(['body' => $body]);return;
+
     if (!empty($body)) {
       foreach ($body as $project) {
         $projects[] = $project->name;
