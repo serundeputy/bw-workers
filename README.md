@@ -39,12 +39,10 @@ Then you can install the php dependencies with:
 lando composer install
 ```
 
-
-
 get-releases.php
 ----------------
 
-Move through the `backdrop-contrib/*` repos and determine if there are new releases
+Move through an `$org/*` repos and determine if there are new releases
 since a given `$date`.
 
 Usage:
@@ -53,14 +51,22 @@ Usage:
 lando php get-releases.php 2020-02-13T20:08:20Z
 ```
 
+`get-releases.php` defaults to the `backdrop-contrib` org so the above command that does not specify a GitHub org or user will run against the `backdrop-contrib` org.
+
 If you need/want to do some testing w/out hitting 20 some odd pages of releases.
 Pass in testing `TRUE` flag like so:
 
 ```bash
-lando php get-releases 2020-02-13T20:08:20Z TRUE
+lando php get-releases 2020-02-13T20:08:20Z backdrop-contrib TRUE
 ```
 
-that will just hit the first page of releases via GitHub API.
+that will just hit the first page of releases via GitHub API of the org `backdrop-contrib`.  If you want to see releases from `serundeputy` just replace the `backdrop-contrib` string with `serundeputy` like so:
+
+```bash
+lando php get-releases 2020-02-13T20:08:20Z serundeputy
+```
+
+or any GitHub org or user you are interested in.
 
 get-tweets.php
 --------------
