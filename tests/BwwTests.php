@@ -18,8 +18,8 @@ class BwwTests extends TestCase {
       'This is a test run and only the first 30 results will be used',
       $output
     );
-    $stringTest = strpos($output, 'new releases since') ||
+    $string_test = strpos($output, 'new releases since') ||
       strpos($output, 'new release since');
-    $this->assertTrue($stringTest);
+    $this->assertTrue($string_test);
   }
 }
