@@ -18,9 +18,8 @@ class BwwTests extends TestCase {
       'This is a test run and only the first 30 results will be used',
       $output
     );
-    $this->assertStringContainsString(
-      'new releases since 2020-02-26T01:08:20Z',
-      $output
-    );
+    $stringTest = strpos($output, 'new releases since') ||
+      strpos($output, 'new release since');
+    $this->assertTrue($stringTest);
   }
 }
