@@ -120,6 +120,9 @@ function get_latest_release($base_url, $authorization, $repo, $owner = 'backdrop
 function get_all_contrib_projects($base_url, $authorization, $org = 'backdrop-contrib', $test_run = FALSE) {
   $url = "$base_url/users/$org/repos";
   $projects = [];
+
+  print "\n\t\tGathering backdrop-contrib repos .";
+
   do {
     $ch = curl_init();
     curl_setopt(
@@ -150,6 +153,7 @@ function get_all_contrib_projects($base_url, $authorization, $org = 'backdrop-co
       }
     }
     $url = _next_url($my_header, $test_run);
+    print " .";
   } while ($url);
 
   return $projects;
@@ -178,13 +182,10 @@ function get_new_rleases_since_date($base_url, $authorization, $date, $org, $tes
     $release = get_latest_release($base_url, $authorization, $project, $org);
     $release_name = $release->project;
     $release_date = (isset($release->created_at)) ? $release->created_at : NULL;
-    print_r([
-      'release name' => $release->project,
-      'release date' => $release_date,
-      'strtotime date' => strtotime($date),
-      'strtotime rd' => strtotime($release_date),
-    ]);
-    // Check if release is later than $date.
+
+    print "\t\t\033[1m$release->project\033[0m\n";
+
+    // eheck if release is later than $date.
     if (!empty($release_date) && strtotime($release_date) > strtotime($date)) {
       $new_releases[$release_name] = [
         'version' => $release->tag_name,
@@ -235,7 +236,6 @@ function _next_url($my_header, $test_run = FALSE) {
   else {
     $next_url = NULL;
   }
-  print_r(['next url' => $next_url]);
 
   return $next_url;
 }
