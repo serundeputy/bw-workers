@@ -185,7 +185,7 @@ function get_new_rleases_since_date($base_url, $authorization, $date, $org, $tes
 
     print "\t\t\033[1m$release->project\033[0m\n";
 
-    // eheck if release is later than $date.
+    // Check if release is later than $date.
     if (!empty($release_date) && strtotime($release_date) > strtotime($date)) {
       $new_releases[$release_name] = [
         'version' => $release->tag_name,
